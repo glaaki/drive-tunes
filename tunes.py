@@ -21,8 +21,8 @@ except ImportError:
 # at ~/.credentials/sheets.googleapis.com-python-quickstart.json
 SCOPES = 'https://www.googleapis.com/auth/spreadsheets.readonly'
 CLIENT_SECRET_FILE = 'client_secret.json'
-APPLICATION_NAME = 'Sheet Tunes'
-LOCAL_SAVE_PATH = '~/Music'
+APPLICATION_NAME = 'Drive Tunes'
+LOCAL_SAVE_PATH = 'Music'
 PHONE_SAVE_PATH = ''
 
 options = {
@@ -41,12 +41,24 @@ options = {
 
 def main():
     song_data = get_song_list()
+    failures = []
     for song in song_data:
-        pass
+        artist = song[0]
+        track_name = song[1]
+        album = song[2]
+        url = song[3]
+        save_path = os.path.join(LOCAL_SAVE_PATH, artist, album)
+        filename = artist + ' - ' + track_name + '.%(ext)s'
+        options['outtmpl'] = os.path.join(save_path, filename)
+        try:
+            with youtube_dl.YoutubeDL(options) as ydl:
+                ydl.download([url])
+        except:
+            failures.append(artist + ' - ' + track_name)
 
-    import pudb; pudb.set_trace()
-    with youtube_dl.YoutubeDL(options) as ydl:
-        ydl.download(['https://www.youtube.com/watch?v=dQw4w9WgXcQ'])
+    print('The following tracks errored out and were not obtained:')
+    for fail in failures:
+        print(fail)
 
 
 def get_song_list():
