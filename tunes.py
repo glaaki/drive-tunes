@@ -22,6 +22,45 @@ except ImportError:
 SCOPES = 'https://www.googleapis.com/auth/spreadsheets.readonly'
 CLIENT_SECRET_FILE = 'client_secret.json'
 APPLICATION_NAME = 'Sheet Tunes'
+LOCAL_SAVE_PATH = '~/Music'
+PHONE_SAVE_PATH = ''
+
+options = {
+    'format': 'bestaudio/best',
+    'extractaudio': True,
+    'audioformat': "mp3",
+    'postprocessors': [{
+        'key': 'FFmpegExtractAudio',
+        'preferredcodec': 'mp3',
+        'preferredquality': '192',
+    }],
+    'outtmpl': '%(title)s.%(ext)s',
+    'noplaylist': True
+}
+
+
+def main():
+    song_data = get_song_list()
+    for song in song_data:
+        pass
+
+    import pudb; pudb.set_trace()
+    with youtube_dl.YoutubeDL(options) as ydl:
+        ydl.download(['https://www.youtube.com/watch?v=dQw4w9WgXcQ'])
+
+
+def get_song_list():
+    credentials = get_credentials()
+    http = credentials.authorize(httplib2.Http())
+    discoveryUrl = ('https://sheets.googleapis.com/$discovery/rest?'
+                    'version=v4')
+    service = discovery.build('sheets', 'v4', http=http,
+                              discoveryServiceUrl=discoveryUrl)
+    spreadsheetId = '1w0iR-v-SYYzpznMdEcA94i6MCIiN0VLUE59tGUajlBI'
+    rangeName = 'Song Data!A2:D'
+    result = service.spreadsheets().values().get(
+        spreadsheetId=spreadsheetId, range=rangeName).execute()
+    return result.get('values', [])
 
 
 def get_credentials():
@@ -51,38 +90,6 @@ def get_credentials():
             credentials = tools.run(flow, store)
         print('Storing credentials to ' + credential_path)
     return credentials
-
-
-def get_song_list(user, pswd):
-    credentials = get_credentials()
-    http = credentials.authorize(httplib2.Http())
-    discoveryUrl = ('https://sheets.googleapis.com/$discovery/rest?'
-                    'version=v4')
-    service = discovery.build('sheets', 'v4', http=http,
-                              discoveryServiceUrl=discoveryUrl)
-    spreadsheetId = '1w0iR-v-SYYzpznMdEcA94i6MCIiN0VLUE59tGUajlBI'
-    rangeName = 'Song Data!A2:D'
-    result = service.spreadsheets().values().get(
-        spreadsheetId=spreadsheetId, range=rangeName).execute()
-    return result.get('values', [])
-
-def main():
-    songs = get_song_list()
-
-    options = {
-        'format': 'bestaudio/best',
-        'extractaudio': True,
-        'audioformat': "mp3",
-        'postprocessors': [{
-            'key': 'FFmpegExtractAudio',
-            'preferredcodec': 'mp3',
-            'preferredquality': '192',
-        }],
-        'outtmpl': '%(title)s.%(ext)s',
-        'noplaylist': True
-    }
-    with youtube_dl.YoutubeDL(options) as ydl:
-        ydl.download(['https://www.youtube.com/watch?v=dQw4w9WgXcQ'])
 
 
 if __name__ == "__main__":
