@@ -41,9 +41,10 @@ options = {
 def main():
     song_data = get_song_list()
     failed_downloads = download_tracks(song_data)
-    print('The following tracks errored out and were not obtained:')
-    for fail in failed_downloads:
-        print(fail)
+    if failed_downloads:
+        print('\nThe following tracks errored out and were not obtained:')
+        for fail in failed_downloads:
+            print(fail)
 
 
 # download the youtube videos, returns the strings of the
