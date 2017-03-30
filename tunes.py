@@ -34,18 +34,26 @@ options = {
         'preferredcodec': 'mp3',
         'preferredquality': '192',
     }],
-    'outtmpl': '%(title)s.%(ext)s',
     'noplaylist': True
 }
 
 
 def main():
     song_data = get_song_list()
+    failed_downloads = download_tracks(song_data)
+    print('The following tracks errored out and were not obtained:')
+    for fail in failed_downloads:
+        print(fail)
+
+
+# download the youtube videos, returns the strings of the
+# failed tracks for manual intervention by the user.
+def download_tracks(song_list):
     failures = []
-    for song in song_data:
+    for song in song_list:
         artist = song[0]
         track_name = song[1]
-        album = song[2]
+        album = song[2] # this might be '', but the joins below handle it
         url = song[3]
         save_path = os.path.join(LOCAL_SAVE_PATH, artist, album)
         filename = artist + ' - ' + track_name + '.%(ext)s'
@@ -55,12 +63,10 @@ def main():
                 ydl.download([url])
         except:
             failures.append(artist + ' - ' + track_name)
-
-    print('The following tracks errored out and were not obtained:')
-    for fail in failures:
-        print(fail)
+    return failures
 
 
+# connects to google drive and gets our desired track list
 def get_song_list():
     credentials = get_credentials()
     http = credentials.authorize(httplib2.Http())
