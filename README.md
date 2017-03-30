@@ -1,3 +1,3 @@
 # keep-tunes
 
-A wrapper around [youtube-dl](https://github.com/rg3/youtube-dl) to scrape mp3s from a list in google keep.
+A wrapper around [youtube-dl](https://github.com/rg3/youtube-dl) to scrape mp3s from a spreadsheet in google drive. Follow the first part in the [sheets api quickstart](https://developers.google.com/sheets/api/quickstart/python) to get a working `client_secret.json` (and make sure that's what it's named). 
