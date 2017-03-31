@@ -32,7 +32,7 @@ options = {
     'postprocessors': [{
         'key': 'FFmpegExtractAudio',
         'preferredcodec': 'mp3',
-        'preferredquality': '192',
+        'preferredquality': '320',
     }],
     'noplaylist': True
 }
@@ -41,15 +41,24 @@ options = {
 def main():
     song_data = get_song_list()
     failed_downloads = download_tracks(song_data)
+    new_sheet_data = pad_sheet_data(failed_downloads, len(song_data))
+    update_sheet(new_sheet_data)
     if failed_downloads:
         print('\nThe following tracks errored out and were not obtained:')
         for fail in failed_downloads:
             print(fail[0] + ' - ' + fail[1])
-    update_sheet(failed_downloads)
 
 
-# download the youtube videos, returns the strings of the
-# failed tracks for manual intervention by the user.
+# takes the failed entries and adds blank rows until it's the
+# same length as the original data (that way when we write it
+# back, it has the effect of clearing everything but the errors)
+def pad_sheet_data(rows_to_keep, row_count):
+    while len(rows_to_keep) < row_count:
+        rows_to_keep.append(['', '', '', ''])
+    return rows_to_keep
+
+
+# download the youtube videos, returns the failed tracks
 def download_tracks(song_list):
     failures = []
     for song in song_list:
