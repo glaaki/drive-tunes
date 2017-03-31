@@ -44,7 +44,8 @@ def main():
     if failed_downloads:
         print('\nThe following tracks errored out and were not obtained:')
         for fail in failed_downloads:
-            print(fail)
+            print(fail[0] + ' - ' + fail[1])
+    update_sheet(failed_downloads)
 
 
 # download the youtube videos, returns the strings of the
@@ -63,8 +64,23 @@ def download_tracks(song_list):
             with youtube_dl.YoutubeDL(options) as ydl:
                 ydl.download([url])
         except:
-            failures.append(artist + ' - ' + track_name)
+            failures.append(song)
     return failures
+
+
+def update_sheet(values):
+    credentials = get_credentials()
+    http = credentials.authorize(httplib2.Http())
+    discoveryUrl = ('https://sheets.googleapis.com/$discovery/rest?'
+                    'version=v4')
+    service = discovery.build('sheets', 'v4', http=http,
+                              discoveryServiceUrl=discoveryUrl)
+    spreadsheet_id = '1w0iR-v-SYYzpznMdEcA94i6MCIiN0VLUE59tGUajlBI'
+    range_name = 'Song Data!A2:D'
+    body = {'values': values}
+    result = service.spreadsheets().values().update(
+             spreadsheetId=spreadsheet_id, range=range_name,
+             valueInputOption='RAW', body=body).execute()
 
 
 # connects to google drive and gets our desired track list
