@@ -5,6 +5,7 @@ from __future__ import unicode_literals, print_function
 import httplib2
 import os
 import youtube_dl
+from youtube_dl.postprocessor.ffmpeg import FFmpegMetadataPP
 
 from apiclient import discovery
 from oauth2client import client
@@ -53,9 +54,10 @@ def main():
 # same length as the original data (that way when we write it
 # back, it has the effect of clearing everything but the errors)
 def pad_sheet_data(rows_to_keep, row_count):
-    while len(rows_to_keep) < row_count:
-        rows_to_keep.append(['', '', '', ''])
-    return rows_to_keep
+    padded_data = rows_to_keep[:]
+    while len(padded_data) < row_count:
+        padded_data.append(['', '', '', ''])
+    return padded_data
 
 
 # download the youtube videos, returns the failed tracks
@@ -69,8 +71,15 @@ def download_tracks(song_list):
         save_path = os.path.join(LOCAL_SAVE_PATH, artist, album)
         filename = artist + ' - ' + track_name + '.%(ext)s'
         options['outtmpl'] = os.path.join(save_path, filename)
+        metadata = {
+            'title': track_name,
+            'artist': artist,
+            'album': album,
+        }
         try:
             with youtube_dl.YoutubeDL(options) as ydl:
+                ffmpeg_mp3_metadata_pp = FFmpegMP3MetadataPP(ydl, metadata)
+                ydl.add_post_processor(ffmpeg_mp3_metadata_pp)
                 ydl.download([url])
         except:
             failures.append(song)
@@ -134,6 +143,38 @@ def get_credentials():
             credentials = tools.run(flow, store)
         print('Storing credentials to ' + credential_path)
     return credentials
+
+
+# https://github.com/rg3/youtube-dl/issues/12225
+# youtube-dl will only add metadata if it infers the data by itself.
+# custom postprocessor to add the title / album we specify.
+class FFmpegMP3MetadataPP(FFmpegMetadataPP):
+
+    def __init__(self, downloader=None, metadata=None):
+        self.metadata = metadata or {}
+        super(FFmpegMP3MetadataPP, self).__init__(downloader)
+
+    def run(self, information):
+        information = self.purge_metadata(information)
+        information.update(self.metadata)
+        return super(FFmpegMP3MetadataPP, self).run(information)
+
+    def purge_metadata(self, info):
+        info.pop('title', None)
+        info.pop('track', None)
+        info.pop('upload_date', None)
+        info.pop('description', None)
+        info.pop('webpage_url', None)
+        info.pop('track_number', None)
+        info.pop('artist', None)
+        info.pop('creator', None)
+        info.pop('uploader', None)
+        info.pop('uploader_id', None)
+        info.pop('genre', None)
+        info.pop('album', None)
+        info.pop('album_artist', None)
+        info.pop('disc_number', None)
+        return info
 
 
 if __name__ == "__main__":
