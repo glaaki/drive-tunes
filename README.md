@@ -9,7 +9,6 @@ pip3 install httplib2 youtube_dl
 pip3 install --upgrade google-api-python-client
 ```
 `sudo apt-get install libav-tools` for 'nix/wsl or `brew install libav` for mac.
-```
 
 ### todo
 Modify to use some cmd line options, currently the save directory and google sheet are hardcoded.
