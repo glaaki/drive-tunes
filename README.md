@@ -4,10 +4,12 @@ A wrapper around [youtube-dl](https://github.com/rg3/youtube-dl) to scrape mp3s 
 
 needs the following:
 ```bash
-pip install --upgrade google-api-python-client
-brew install libav
+sudo apt-get install python3-pip (if pip isn't already set up)
+pip3 install httplib2 youtube_dl
+pip3 install --upgrade google-api-python-client
 ```
-libav is for ffmpeg, install might differ a bit on windows or linux.
+`sudo apt-get install libav-tools` for 'nix/wsl or 'brew install libav` for mac.
+```
 
 ### todo
 Modify to use some cmd line options, currently the save directory and google sheet are hardcoded.
