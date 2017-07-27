@@ -64,11 +64,11 @@ def pad_sheet_data(rows_to_keep, row_count):
 def download_tracks(song_list):
     failures = []
     for song in song_list:
-        artist = song[0]
-        track_name = song[1]
-        album = song[2] # this might be '', but the joins below handle it
-        url = song[3]
-        save_path = os.path.join(LOCAL_SAVE_PATH, artist, album)
+        artist = song[0].strip()
+        track_name = song[1].strip()
+        album = song[2].strip() # this might be '', but the joins below handle it
+        url = song[3].strip()
+        save_path = create_safe_path(artist, album)
         filename = artist + ' - ' + track_name + '.%(ext)s'
         options['outtmpl'] = os.path.join(save_path, filename)
         metadata = {
@@ -84,6 +84,17 @@ def download_tracks(song_list):
         except:
             failures.append(song)
     return failures
+
+
+# albums and artists make up part of the path, but occasionally there are characters
+# that cause windows to throw fit. this is not meant to be a robust solution to path
+# sanitization, just catching the obvious things.
+def create_safe_path(artist, album):
+    windows_reserved_path_chars = ['<','>',':','"','/', '\\','|','?','*']
+    for unsafe_char in windows_reserved_path_chars:
+        artist = artist.replace(unsafe_char, '')
+        album = album.replace(unsafe_char, '')
+    return os.path.join(LOCAL_SAVE_PATH, artist, album)
 
 
 def update_sheet(values):
