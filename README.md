@@ -12,3 +12,7 @@ pip3 install --upgrade google-api-python-client
 
 ### todo
 Modify to automatically copy to the proper directory.
+
+### example sheet
+The second tab is formatted exactly the same as `Song Data`, downloaded items are appended there just in case.
+![my sheet](example_sheet.png)
