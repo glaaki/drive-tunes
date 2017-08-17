@@ -11,7 +11,8 @@ pip3 install --upgrade google-api-python-client
 `sudo apt-get install libav-tools` for 'nix/wsl or `brew install libav` for mac.
 
 ### todo
-Modify to automatically copy to the proper directory.
+* Modify to automatically copy to the proper directory.
+* Set up a proper requirements.txt
 
 ### example sheet
 The second tab is formatted exactly the same as `Song Data`, downloaded items are appended there just in case.
