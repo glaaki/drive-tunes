@@ -48,10 +48,11 @@ options = {
 
 def main():
     song_data = get_song_list()
-    failed_downloads = download_tracks(song_data)
-    new_sheet_data = pad_sheet_data(failed_downloads, len(song_data))
-    update_sheet(new_sheet_data)
-    if failed_downloads:
+    successful_tracks, failed_tracks = download_tracks(song_data)
+    main_tab_data = pad_sheet_data(failed_tracks, len(song_data))
+    append_to_sheet('Previously Downloaded!A2:D', successful_tracks)
+    update_sheet('Song Data!A2:D', main_tab_data)
+    if failed_tracks:
         print('\nThe following tracks errored out and were not obtained:')
         for fail in failed_downloads:
             print(fail[0] + ' - ' + fail[1])
@@ -69,6 +70,7 @@ def pad_sheet_data(rows_to_keep, row_count):
 
 # download the youtube videos, returns the failed tracks
 def download_tracks(song_list):
+    successes = []
     failures = []
     for song in song_list:
         artist = song[0].strip()
@@ -88,13 +90,14 @@ def download_tracks(song_list):
                 ffmpeg_mp3_metadata_pp = FFmpegMP3MetadataPP(ydl, metadata)
                 ydl.add_post_processor(ffmpeg_mp3_metadata_pp)
                 ydl.download([url])
+            successes.append(song)
         except:
             failures.append(song)
-    return failures
+    return (successes, failures)
 
 
 # albums and artists make up part of the path, but occasionally there are characters
-# that cause windows to throw fit. this is not meant to be a robust solution to path
+# that cause windows to throw a fit. this is not meant to be a robust solution to path
 # sanitization, just catching the obvious things.
 def create_safe_path(artist, album):
     windows_reserved_path_chars = ['<','>',':','"','/', '\\','|','?','*']
@@ -104,14 +107,24 @@ def create_safe_path(artist, album):
     return os.path.join(LOCAL_SAVE_PATH, artist, album)
 
 
-def update_sheet(values):
+def update_sheet(range_name, values):
     credentials = get_credentials()
     http = credentials.authorize(httplib2.Http())
     discoveryUrl = ('https://sheets.googleapis.com/$discovery/rest?version=v4')
     service = discovery.build('sheets', 'v4', http=http, discoveryServiceUrl=discoveryUrl)
-    range_name = 'Song Data!A2:D'
     body = {'values': values}
     result = service.spreadsheets().values().update(
+             spreadsheetId=spreadsheet_id, range=range_name,
+             valueInputOption='RAW', body=body).execute()
+
+
+def append_to_sheet(range_name, values):
+    credentials = get_credentials()
+    http = credentials.authorize(httplib2.Http())
+    discoveryUrl = ('https://sheets.googleapis.com/$discovery/rest?version=v4')
+    service = discovery.build('sheets', 'v4', http=http, discoveryServiceUrl=discoveryUrl)
+    body = {'values': values}
+    result = service.spreadsheets().values().append(
              spreadsheetId=spreadsheet_id, range=range_name,
              valueInputOption='RAW', body=body).execute()
 
