@@ -4,6 +4,7 @@
 from __future__ import unicode_literals, print_function
 import httplib2
 import os
+import sys
 import youtube_dl
 from youtube_dl.postprocessor.ffmpeg import FFmpegMetadataPP
 
@@ -25,6 +26,12 @@ CLIENT_SECRET_FILE = 'client_secret.json'
 APPLICATION_NAME = 'Drive Tunes'
 LOCAL_SAVE_PATH = 'Music'
 PHONE_SAVE_PATH = ''
+
+try:
+    spreadsheet_id = os.environ['TUNES_SHEET_ID']
+except KeyError:
+    print('Please set the TUNES_SHEET_ID env variable with your google sheet id.')
+    sys.exit()
 
 options = {
     'format': 'bestaudio/best',
@@ -100,11 +107,8 @@ def create_safe_path(artist, album):
 def update_sheet(values):
     credentials = get_credentials()
     http = credentials.authorize(httplib2.Http())
-    discoveryUrl = ('https://sheets.googleapis.com/$discovery/rest?'
-                    'version=v4')
-    service = discovery.build('sheets', 'v4', http=http,
-                              discoveryServiceUrl=discoveryUrl)
-    spreadsheet_id = '1w0iR-v-SYYzpznMdEcA94i6MCIiN0VLUE59tGUajlBI'
+    discoveryUrl = ('https://sheets.googleapis.com/$discovery/rest?version=v4')
+    service = discovery.build('sheets', 'v4', http=http, discoveryServiceUrl=discoveryUrl)
     range_name = 'Song Data!A2:D'
     body = {'values': values}
     result = service.spreadsheets().values().update(
@@ -116,14 +120,11 @@ def update_sheet(values):
 def get_song_list():
     credentials = get_credentials()
     http = credentials.authorize(httplib2.Http())
-    discoveryUrl = ('https://sheets.googleapis.com/$discovery/rest?'
-                    'version=v4')
-    service = discovery.build('sheets', 'v4', http=http,
-                              discoveryServiceUrl=discoveryUrl)
-    spreadsheetId = '1w0iR-v-SYYzpznMdEcA94i6MCIiN0VLUE59tGUajlBI'
+    discoveryUrl = ('https://sheets.googleapis.com/$discovery/rest?version=v4')
+    service = discovery.build('sheets', 'v4', http=http, discoveryServiceUrl=discoveryUrl)
     rangeName = 'Song Data!A2:D'
     result = service.spreadsheets().values().get(
-        spreadsheetId=spreadsheetId, range=rangeName).execute()
+        spreadsheetId=spreadsheet_id, range=rangeName).execute()
     return result.get('values', [])
 
 
@@ -158,7 +159,7 @@ def get_credentials():
 
 # https://github.com/rg3/youtube-dl/issues/12225
 # youtube-dl will only add metadata if it infers the data by itself.
-# custom postprocessor to add the title / album we specify.
+# here is a custom postprocessor to add the title / album we specify.
 class FFmpegMP3MetadataPP(FFmpegMetadataPP):
 
     def __init__(self, downloader=None, metadata=None):
