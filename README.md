@@ -15,11 +15,14 @@ also needs ffmpeg installed: `sudo apt-get install libav-tools` for 'nix/wsl or 
 
 ### todo
 * Modify to automatically copy to the proper directory.
+* Could use the script to properly set up the labels and sheet tabs.
 
 ### example sheet
-The second tab is a backup of the first.
+The script skips row 1 so set up your sheet like this:
 
 | Artist      | Title  | Album  | Link |
 | ----------- | ------ | ------ | ---- |
 | artistname1 | title1 | album1 | https://www.youtube.com/watch?v=dQw4w9WgXcQ |
 | artistname2 | title2 | album2 | https://www.youtube.com/watch?v=dQw4w9WgXcQ |
+
+Tab1 should be labeled 'Song Data' and tab2 should be 'Previously Downloaded'.
