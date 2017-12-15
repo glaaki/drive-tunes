@@ -4,15 +4,17 @@ A wrapper around [youtube-dl](https://github.com/rg3/youtube-dl) to scrape mp3s 
 
 needs the following:
 ```bash
-sudo apt-get install python3-pip (if pip isn't already set up)
-pip3 install httplib2 youtube_dl
-pip3 install --upgrade google-api-python-client
+sudo apt-get install python3-pip
+sudo apt-get install python3-venv
+git clone https://github.com/glaaki/drive-tunes.git
+python3 -m venv drive-tunes/
+source drive-tunes/bin/activate
+pip install -r drive-tunes/requirements.txt
 ```
-`sudo apt-get install libav-tools` for 'nix/wsl or `brew install libav` for mac.
+also needs ffmpeg installed: `sudo apt-get install libav-tools` for 'nix/wsl or `brew install libav` for mac.
 
 ### todo
 * Modify to automatically copy to the proper directory.
-* Set up a proper requirements.txt
 
 ### example sheet
 The second tab is formatted exactly the same as `Song Data`, downloaded items are appended there just in case.
