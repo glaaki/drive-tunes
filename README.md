@@ -17,5 +17,9 @@ also needs ffmpeg installed: `sudo apt-get install libav-tools` for 'nix/wsl or 
 * Modify to automatically copy to the proper directory.
 
 ### example sheet
-The second tab is formatted exactly the same as `Song Data`, downloaded items are appended there just in case.
-![my sheet](example_sheet.png)
+The second tab is a backup of the first.
+
+| Artist      | Title  | Album  | Link |
+| ----------- | ------ | ------ | ---- |
+| artistname1 | title1 | album1 | https://www.youtube.com/watch?v=dQw4w9WgXcQ |
+| artistname2 | title2 | album2 | https://www.youtube.com/watch?v=dQw4w9WgXcQ |
