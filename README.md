@@ -4,14 +4,13 @@ A wrapper around [youtube-dl](https://github.com/rg3/youtube-dl) to scrape mp3s 
 
 needs the following:
 ```bash
-sudo apt-get install python3-pip
-sudo apt-get install python3-venv
+sudo apt-get install python3-pip python3-venv libav-tools
 git clone https://github.com/glaaki/drive-tunes.git
 python3 -m venv drive-tunes/
 source drive-tunes/bin/activate
 pip install -r drive-tunes/requirements.txt
 ```
-also needs ffmpeg installed: `sudo apt-get install libav-tools` for 'nix/wsl or `brew install libav` for mac.
+for mac you can `brew install libav` instead of the above libav-tools (ffmpeg is really what we're after)
 
 ### todo
 * Modify to automatically copy to the proper directory.
