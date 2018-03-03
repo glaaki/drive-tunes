@@ -2,6 +2,8 @@
 
 A wrapper around [youtube-dl](https://github.com/rg3/youtube-dl) to scrape mp3s from a spreadsheet in google drive. Follow the first part in the [sheets api quickstart](https://developers.google.com/sheets/api/quickstart/python) to get a working `client_secret.json` (and make sure that's what it's named). 
 
+update: there's now an easy install option, get your sheet id and client secret and put them in setup.yml then run `ansible-playbook setup.yml -K` to install everything. You will need --ask-vault-pass if you use ansible-vault to encrypt your secrets. This method spits out a tunes.sh that wraps the venv and exports your sheet ID automatically for you.
+
 needs the following:
 ```bash
 sudo apt-get install python3-pip python3-venv libav-tools
