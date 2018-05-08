@@ -16,17 +16,23 @@
         - virtualenv
         - python3-pip
         - libav-tools
+      when: ansible_facts['pkg_mgr'] == 'apt'
       become: yes
-    - pip: name={{item}} virtualenv={{venv_dir}} state=latest
+    - pacman: name=python-pip,ffmpeg state=latest
+      when: ansible_facts['pkg_mgr'] == 'pacman'
+      become: yes
+    - pip:
+        name: '{{item}}'
+        virtualenv: '{{venv_dir}}'
+        state: latest
+        virtualenv_command: /usr/bin/python3 -m venv
       with_items:
         - google-api-python-client
         - httplib2
         - oauth2client
-        - pkg-resources
         - pyasn1
         - pyasn1-modules
         - rsa
         - six
         - uritemplate
         - youtube-dl
-  gather_facts: no
