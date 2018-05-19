@@ -10,7 +10,7 @@
     - venv_dir: '{{playbook_dir}}/tunes_venv'
   tasks:
     - copy: content='{{client_secret}}' dest={{playbook_dir}}/client_secret.json
-    - template: src=templates/tunes.sh dest={{playbook_dir}}/get_tunes.sh mode=u+x
+    - template: src=templates/tunes.sh dest={{playbook_dir}}/get_tunes.sh mode=0777
     - apt: name={{item}} state=latest
       with_items:
         - virtualenv
@@ -36,3 +36,5 @@
         - six
         - uritemplate
         - youtube-dl
+    - file: src='{{playbook_dir}}/get_tunes.sh' dest=/usr/local/bin/tunes state=link
+      become: yes
