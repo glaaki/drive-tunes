@@ -14,10 +14,10 @@
     - apt: name={{item}} state=latest update_cache=yes
       with_items:
         - libav-tools
-      when: ansible_facts['pkg_mgr'] == 'apt'
+      when: ansible_pkg_mgr == 'apt'
       become: yes
     - pacman: name=python-pip,ffmpeg state=latest
-      when: ansible_facts['pkg_mgr'] == 'pacman'
+      when: ansible_pkg_mgr == 'pacman'
       become: yes
     - pip:
         name: '{{item}}'
