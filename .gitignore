@@ -9,3 +9,4 @@ share/
 etc/
 tunes_venv/
 get_tunes.sh
+.vault_pass

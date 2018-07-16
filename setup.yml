@@ -11,10 +11,8 @@
   tasks:
     - copy: content='{{client_secret}}' dest={{playbook_dir}}/client_secret.json
     - template: src=templates/tunes.sh dest={{playbook_dir}}/get_tunes.sh mode=0777
-    - apt: name={{item}} state=latest
+    - apt: name={{item}} state=latest update_cache=yes
       with_items:
-        - virtualenv
-        - python3-pip
         - libav-tools
       when: ansible_facts['pkg_mgr'] == 'apt'
       become: yes
