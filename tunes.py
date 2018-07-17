@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-
-
 from __future__ import unicode_literals, print_function
 import httplib2
 import os
@@ -11,27 +9,14 @@ from youtube_dl.postprocessor.ffmpeg import FFmpegMetadataPP
 from apiclient import discovery
 from oauth2client import client
 from oauth2client import tools
-from oauth2client.file import Storage
 
-try:
-    import argparse
-    flags = argparse.ArgumentParser(parents=[tools.argparser]).parse_args()
-except ImportError:
-    flags = None
-
-# If modifying these scopes, delete your previously saved credentials
-# at ~/.credentials/sheets.googleapis.com-python-quickstart.json
-SCOPES = 'https://www.googleapis.com/auth/spreadsheets'
-CLIENT_SECRET_FILE = 'client_secret.json'
-APPLICATION_NAME = 'Drive Tunes'
 LOCAL_SAVE_PATH = 'Music'
 PHONE_SAVE_PATH = ''
 
 try:
     spreadsheet_id = os.environ['TUNES_SHEET_ID']
 except KeyError:
-    print('Please set the TUNES_SHEET_ID env variable with your google sheet id.')
-    sys.exit()
+    raise KeyErrror('Please set the TUNES_SHEET_ID env variable with your google sheet id.')
 
 options = {
     'format': 'bestaudio/best',
@@ -142,32 +127,15 @@ def get_song_list():
 
 
 def get_credentials():
-    """Gets valid user credentials from storage.
-
-    If nothing has been stored, or if the stored credentials are invalid,
-    the OAuth2 flow is completed to obtain the new credentials.
+    """Parses the auth json we store in env and creates OAuth2Credentials.
 
     Returns:
         Credentials, the obtained credential.
     """
-    home_dir = os.path.expanduser('~')
-    credential_dir = os.path.join(home_dir, '.credentials')
-    if not os.path.exists(credential_dir):
-        os.makedirs(credential_dir)
-    credential_path = os.path.join(credential_dir,
-                                   'sheets.googleapis.com-python-quickstart.json')
-
-    store = Storage(credential_path)
-    credentials = store.get()
-    if not credentials or credentials.invalid:
-        flow = client.flow_from_clientsecrets(CLIENT_SECRET_FILE, SCOPES)
-        flow.user_agent = APPLICATION_NAME
-        if flags:
-            credentials = tools.run_flow(flow, store, flags)
-        else: # Needed only for compatibility with Python 2.6
-            credentials = tools.run(flow, store)
-        print('Storing credentials to ' + credential_path)
-    return credentials
+    if 'GOOGLE_AUTH_JSON' in os.environ:
+        return client.OAuth2Credentials.from_json(os.environ['GOOGLE_AUTH_JSON'])
+    else:
+        raise EnvironmentError('GOOGLE_AUTH_JSON env not set. did you run the setup ansible?')
 
 
 # https://github.com/rg3/youtube-dl/issues/12225
