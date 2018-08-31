@@ -1,6 +1,6 @@
-FROM python:3.6
+FROM python:3.6-alpine
 WORKDIR /app
-ADD . /app
-RUN pip3 install ansible && apt-get update && apt-get install python3-apt -y
-RUN ansible-playbook setup.yml --vault-password-file .vault_pass -vvv
-CMD ['./get_tunes.sh']
+COPY ./requirements.txt /app
+COPY ./tunes.py /app
+RUN pip3 install -r requirements.txt
+CMD ['python tunes.py']
