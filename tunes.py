@@ -16,7 +16,7 @@ PHONE_SAVE_PATH = ''
 try:
     spreadsheet_id = os.environ['TUNES_SHEET_ID']
 except KeyError:
-    raise KeyErrror('Please set the TUNES_SHEET_ID env variable with your google sheet id.')
+    raise KeyError('Please set the TUNES_SHEET_ID env variable with your google sheet id.')
 
 options = {
     'format': 'bestaudio/best',
