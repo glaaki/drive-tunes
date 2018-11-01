@@ -27,3 +27,5 @@ The script skips row 1 so set up your sheet like this:
 | artistname2 | title2 | album2 | https://www.youtube.com/watch?v=dQw4w9WgXcQ |
 
 Tab1 should be labeled 'Song Data' and tab2 should be 'Previously Downloaded'.
+
+Docker note: if behind proxy use `docker build --network=host . -t 'tagname'`

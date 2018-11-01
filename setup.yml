@@ -34,9 +34,8 @@
         - uritemplate
         - youtube-dl
     - command: '{{venv_dir}}/bin/python generate_creds.py'
-      register: creds_output
-    - set_fact:                                      # https://stackoverflow.com/q/31969872
-        google_auth_json: ' {{creds_output.stdout}}' # this leading space is intentional!
+    - set_fact: # https://stackoverflow.com/q/31969872 # this leading space is intentional!
+        google_auth_json: " {{lookup('file', '~/.credentials/sheets.drive_tunes.json')}}"
     - template: src=templates/tunes.sh dest={{playbook_dir}}/get_tunes.sh mode=0777
     - file: src='{{playbook_dir}}/get_tunes.sh' dest=/usr/local/bin/tunes state=link
       become: yes
