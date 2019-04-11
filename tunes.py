@@ -10,7 +10,7 @@ from apiclient import discovery
 from oauth2client import client
 from oauth2client import tools
 
-LOCAL_SAVE_PATH = 'Music'
+LOCAL_SAVE_PATH = '/media/Music'
 PHONE_SAVE_PATH = ''
 
 try:
@@ -22,6 +22,7 @@ options = {
     'format': 'bestaudio/best',
     'extractaudio': True,
     'audioformat': "mp3",
+    'writethumbnail': True,
     'postprocessors': [{
         'key': 'FFmpegExtractAudio',
         'preferredcodec': 'mp3',
@@ -39,7 +40,7 @@ def main():
     update_sheet('Song Data!A2:D', main_tab_data)
     if failed_tracks:
         print('\nThe following tracks errored out and were not obtained:')
-        for fail in failed_downloads:
+        for fail in failed_tracks:
             print(fail[0] + ' - ' + fail[1])
 
 

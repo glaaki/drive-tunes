@@ -7,4 +7,4 @@ pyasn1-modules==0.2.1
 rsa==3.4.2
 six==1.11.0
 uritemplate==3.0.0
-youtube-dl==2018.12.17
+youtube-dl
